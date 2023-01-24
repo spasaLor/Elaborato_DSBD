@@ -14,6 +14,7 @@ import json
 def elaboraMetrica(nome_metrica,metrica,partizione,producer):
     isStationary=False
     critValues=[]
+    metrics_data={}
     cyclical_component={}
     seasonal_component={}
     trend_component={}
@@ -40,6 +41,14 @@ def elaboraMetrica(nome_metrica,metrica,partizione,producer):
     np.nan_to_num(result_decompose.trend.values,copy=False)
     result_decompose.seasonal.keys=result_decompose.seasonal.keys().strftime('%Y-%m-%d %H:%M:%S')
     result_decompose.trend.keys=result_decompose.trend.keys().strftime('%Y-%m-%d %H:%M:%S')
+    sampled_metrica = metrica.resample('5T').mean()
+    sampled_metrica = sampled_metrica.reset_index()
+    sampled_metrica = sampled_metrica.applymap(str)
+    sampled_metrica_dict = sampled_metrica.to_dict(orient='index')
+    metrics_data={}
+    for i in range (289):
+        metrics_data[sampled_metrica_dict[i]['timestamp']]=sampled_metrica_dict[i]['value']
+    
 
     for i in range (1440):
         seasonal_component[result_decompose.seasonal.keys[i]]=result_decompose.seasonal.values[i]
@@ -59,7 +68,7 @@ def elaboraMetrica(nome_metrica,metrica,partizione,producer):
     predicted_metrics=prediction.agg(['max','min','mean']).to_dict()
     
     #invio dati al broker kafka
-    total_data={'metric_name':nome_metrica,partizione:{'adfuller_statistic':result_adf[0],'adfuller_p_val':result_adf[1],
+    total_data={'metric_name':nome_metrica,partizione:{'values':metrics_data,'adfuller_statistic':result_adf[0],'adfuller_p_val':result_adf[1],
                     'adfuller_stationary':isStationary,'adfuller_critical':critValues,'acf':result_acf.tolist(),
                     'decompose_season':seasonal_component,'decompose_trend':trend_component,'cyclical_component':cyclical_component,
                     'hourly_data':hourly_data,'three_hourly_data':three_hourly_data,'twelve_hourly_data':twelve_hourly_data,
@@ -70,7 +79,7 @@ def elaboraMetrica(nome_metrica,metrica,partizione,producer):
 
 # Create a PrometheusClient to retrieve data from the server
 client = PrometheusConnect(url='http://15.160.61.227:29090',disable_ssl=True)
-producer = KafkaProducer(bootstrap_servers=['localhost:9092'],value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+producer = KafkaProducer(bootstrap_servers=['localhost:9092'],value_serializer=lambda v: json.dumps(v).encode('utf-8'),api_version=(0,10,2))
 
 label_config = {'job': 'host','mode':'user'}
 start_time = parse_datetime("1d")

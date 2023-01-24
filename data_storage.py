@@ -1,9 +1,10 @@
 from kafka import KafkaConsumer
 import json
 import mysql.connector
+import config
 
 # Connect to the MySQL database
-cnx = mysql.connector.connect(user='root', password='Lorenzo99',host='localhost', database='test_dsbd')
+cnx = mysql.connector.connect(user=config.user, password=config.password, host=config.host, database=config.database)
 cursor = cnx.cursor()
 
 consumer=KafkaConsumer(bootstrap_servers='localhost:9092')
@@ -16,6 +17,9 @@ for message in consumer:
      for disk, values in data.items():
           if disk == 'metric_name':
                continue
+
+          sampled_values=values['values']
+
           adfuller_statistic = values['adfuller_statistic']
           adfuller_p_value = values['adfuller_p_val']
           adfuller_stationary = values['adfuller_stationary']
@@ -55,6 +59,12 @@ for message in consumer:
           cursor.execute(query, values)
           cnx.commit()
           
+          for key,value in sampled_values.items():
+               values9=(metric_name,disk,key,value)
+               query="INSERT INTO metric_values(nome,partizione,timestamp,value) VALUES (%s,%s,%s,%s)"
+               cursor.execute(query,values9)
+               cnx.commit()
+
           for key,value in decompose_season.items():
                values2=(metric_name,disk,key,'seasonal',value)
                query2="INSERT INTO decomposition(nome,partizione,timestamp,tipologia,value) VALUES(%s,%s,%s,%s,%s)"
