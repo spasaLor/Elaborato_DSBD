@@ -6,7 +6,7 @@ import mysql.connector
 cnx = mysql.connector.connect(host = "db",database= "test_dsbd",user = "user",password = "password")
 cursor = cnx.cursor()
 
-consumer=KafkaConsumer(bootstrap_servers='kafka:9092',api_version=(0,10,2))
+consumer=KafkaConsumer(bootstrap_servers='kafka:9092',api_version=(0,10,2),auto_offset_reset='earliest',enable_auto_commit=False)
 consumer.subscribe(['prometheusdata'])
 
 # Read data from kafka
