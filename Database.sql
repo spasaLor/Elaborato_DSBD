@@ -1,6 +1,4 @@
-DROP DATABASE test_DSBD;
-CREATE DATABASE test_DSBD;
-use test_DSBD;
+use test_dsbd;
 
 
 CREATE TABLE metrics (
