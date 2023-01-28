@@ -1,13 +1,12 @@
 from kafka import KafkaConsumer
 import json
 import mysql.connector
-import config
 
 # Connect to the MySQL database
-cnx = mysql.connector.connect(user=config.user, password=config.password, host=config.host, database=config.database)
+cnx = mysql.connector.connect(host = "db",database= "test_dsbd",user = "user",password = "password")
 cursor = cnx.cursor()
 
-consumer=KafkaConsumer(bootstrap_servers='localhost:9092')
+consumer=KafkaConsumer(bootstrap_servers='kafka:9092',api_version=(0,10,2))
 consumer.subscribe(['prometheusdata'])
 
 # Read data from kafka
