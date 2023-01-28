@@ -1,13 +1,15 @@
 FROM python:3.9
 
-COPY data_storage.py /app/data_storage.py
+COPY ETL_data_pipeline.py /app/ETL_data_pipeline.py
 
+RUN pip install prometheus_client
+RUN pip install prometheus_api_client
+RUN pip install requests
 RUN pip install kafka-python
-RUN pip install mysql-connector-python
+RUN pip install statsmodels
 
+ENV PROMETHEUS_URL http://15.160.61.227:29090
 ENV KAFKA_BOOTSTRAP_SERVERS kafka:9092
-ENV MYSQL_HOST localhost
-ENV MYSQL_USER user
-ENV MYSQL_PASSWORD password
-ENV MYSQL_DB test_dsbd
-CMD ["python", "/app/data_storage.py"]
+ENV KAFKA_TOPIC prometheusdata
+
+CMD ["python", "/app/ETL_data_pipeline.py"]

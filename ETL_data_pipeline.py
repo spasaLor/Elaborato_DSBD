@@ -45,8 +45,9 @@ def elaboraMetrica(nome_metrica,metrica,partizione,producer):
     sampled_metrica = sampled_metrica.reset_index()
     sampled_metrica = sampled_metrica.applymap(str)
     sampled_metrica_dict = sampled_metrica.to_dict(orient='index')
+    lungh= len(sampled_metrica_dict)
     metrics_data={}
-    for i in range (289):
+    for i in range (lungh):
         metrics_data[sampled_metrica_dict[i]['timestamp']]=sampled_metrica_dict[i]['value']
     
 
@@ -79,7 +80,7 @@ def elaboraMetrica(nome_metrica,metrica,partizione,producer):
 
 # Create a PrometheusClient to retrieve data from the server
 client = PrometheusConnect(url='http://15.160.61.227:29090',disable_ssl=True)
-producer = KafkaProducer(bootstrap_servers=['localhost:9092'],value_serializer=lambda v: json.dumps(v).encode('utf-8'),api_version=(0,10,2))
+producer = KafkaProducer(bootstrap_servers=['kafka:9092'],value_serializer=lambda v: json.dumps(v).encode('utf-8'),api_version=(0,10,2))
 
 label_config = {'job': 'host','mode':'user'}
 start_time = parse_datetime("1d")
