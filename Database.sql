@@ -1,3 +1,4 @@
+
 use test_dsbd;
 
 
@@ -13,6 +14,13 @@ CREATE TABLE metric_values(
     partizione VARCHAR(20),
     timestamp TIMESTAMP,
     value FLOAT NOT NULL,
+    FOREIGN KEY (nome) REFERENCES metrics(nome)
+);
+CREATE TABLE SLA_MANAGER(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL UNIQUE,
+    max_value FLOAT,
+    min_value FLOAT,
     FOREIGN KEY (nome) REFERENCES metrics(nome)
 );
 CREATE TABLE decomposition (
