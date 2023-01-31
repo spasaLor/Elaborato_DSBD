@@ -248,7 +248,7 @@ async def node_filefd_allocated(stub: retrieval_pb2_grpc.RetrievalServiceStub) -
 
 
 async def run() -> None:
-    async with grpc.aio.insecure_channel('localhost:50051') as channel:
+    async with grpc.aio.insecure_channel('server_data_retrieval:50051') as channel:
         stub = retrieval_pb2_grpc.RetrievalServiceStub(channel)
         
         while(True):
