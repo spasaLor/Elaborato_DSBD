@@ -1,0 +1,31 @@
+{
+    "records":[
+{
+    "Nome" : "memory_MemFree_bytes",
+    "Max_value" : "30000000000",
+    "Min_value" : "9882000000"
+},
+
+{
+    "Nome" : "memory_MemAvailable_bytes",
+    "Max_value" : "32000000000",
+    "Min_value" : "21876100000"
+},
+
+{
+    "Nome" : "filesystem_free_bytes",
+    "Max_value": "50000000000",
+    "Min_value": "10000000000"
+},
+{
+    "Nome" : "filesystem_avail_bytes",
+    "Max_value" : "50000000000",
+    "Min_value" : "10000000000"
+},
+{
+    "Nome" : "filefd_allocated",
+    "Max_value" : "7960",
+    "Min_value" : "0"
+}
+    ]
+}
